@@ -52,6 +52,11 @@ public class ContenerScript : MonoBehaviour
                 if (Input.GetMouseButtonDown(0) & PUController.leftHand != null)
                 {
                     PUController.leftHand.transform.position = target.transform.position;
+                    if (target.GetComponent<FurnaceManager>() != null)
+                    {
+                        Debug.Log("Ingredient Placé sur le four");
+                        PUController.leftHand.transform.position += new Vector3(0, 1.5f, 0);
+                    }
                     targetContainer.ingredientsContain.Add(PUController.leftHand);
                     PUController.leftHand.GetComponent<Ingredients>().currentContainer = targetContainer;
                     targetContainer.RefreshTypes();
@@ -62,6 +67,11 @@ public class ContenerScript : MonoBehaviour
                 if (Input.GetMouseButtonDown(1) & PUController.rightHand != null)
                 {
                     PUController.rightHand.transform.position = target.transform.position;
+                    if (target.GetComponent<FurnaceManager>() != null)
+                    {
+                        Debug.Log("Ingredient Placé sur le four");
+                        PUController.rightHand.transform.position += new Vector3(0, 1.5f, 0);
+                    }
                     targetContainer.ingredientsContain.Add(PUController.rightHand);
                     PUController.rightHand.GetComponent<Ingredients>().currentContainer = targetContainer;
                     targetContainer.RefreshTypes();

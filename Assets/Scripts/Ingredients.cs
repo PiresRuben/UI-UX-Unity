@@ -18,9 +18,7 @@ public class Ingredients : MonoBehaviour
     public Container currentContainer;
     public bool inContainer => currentContainer != null;
 
+    public bool isCooked = false;
 
-    private void Start()
-    {
-
-    }
+    public float tempNeeded;
 }
