@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54e544abf12e20044a37b6741cbc1ee1, type: 3}
+  m_Name: Recette CAC
+  m_EditorClassIdentifier: 
+  nomRecette: Salade CAC
+  ingredients:
+  - {fileID: 11400000, guid: 6893696cdf9a7524db85da2f069e128b, type: 2}
+  - {fileID: 11400000, guid: 6bb16b5f5c1688642a925f94405cb397, type: 2}
+  - {fileID: 11400000, guid: aeff5d1a4ada8c246986574933587fbd, type: 2}
