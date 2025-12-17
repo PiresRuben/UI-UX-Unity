@@ -7,8 +7,8 @@ public class PickUpController : MonoBehaviour
     public float rayDistance = 3f;
 
     [Header("Debug")]
-    public GameObject current;     // Objet actuellement visé
-    public GameObject last;        // Dernier objet visé
+    public GameObject current;      // Objet actuellement visé
+    public GameObject last;         // Dernier objet visé
 
     public bool _holding;
     private Ingredients targetIngredient;
@@ -26,124 +26,137 @@ public class PickUpController : MonoBehaviour
 
     void Start()
     {
-        cam = Camera.main; // Récupération caméra FPS
+        cam = Camera.main;
     }
 
     void Update()
     {
         Debug.DrawRay(cam.transform.position, cam.transform.forward * rayDistance, Color.red);
-
         RaycastHit hit;
 
-        if (leftHand != null || rightHand != null)
-        {
-            _holding = true;
-        }
-        else
-        {
-            _holding = false;
-        }
+        // Gestion de l'état _holding
+        _holding = (leftHand != null || rightHand != null);
 
+        // --- Logique de Raycast existante ---
         if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, rayDistance))
         {
             GameObject target = hit.collider.gameObject;
             if (target.layer == LayerMask.NameToLayer("Ingredients"))
             {
-                // Désactiver l’outline de l'ancien si on change d’objet
-                if (last != null && last != target)
-                    DisableOutline(last);
+                if (last != null && last != target) DisableOutline(last);
+
                 targetIngredient = target.GetComponent<Ingredients>();
-                if (targetIngredient == null) { Debug.LogWarning("Y'a pas le script ingredients dessus"); return; }
+                if (targetIngredient == null) return;
 
                 current = target;
                 EnableOutline(current);
                 last = current;
+
                 PickUpCanva.enabled = true;
                 PickUpCanva.transform.position = current.transform.position + Vector3.up;
 
-
-                // Clic gauche = objet main gauche
+                // Clic Gauche (Ramasser ce qu'on vise)
                 if (Input.GetMouseButtonDown(0) && leftHand == null)
                 {
-                    DisableOutline(current);
-                    current.transform.position = leftHandCamera.transform.position + Vector3.forward;
-
-                    if (targetIngredient.currentContainer != null)
-                    {
-                        Container cont = targetIngredient.currentContainer;
-
-                        cont.ingredientsContain.Remove(current);
-                        cont.RefreshTypes();
-
-                        targetIngredient.currentContainer = null;
-                    }
-
-                    leftHand = current;
+                    HandlePickUp(current, targetIngredient, true);
                     PickUpCanva.enabled = false;
-
-                    current = null;
-                    last = null;
-
                 }
 
-                // Clic droit = objet main droite
+                // Clic Droit (Ramasser ce qu'on vise)
                 if (Input.GetMouseButtonDown(1) && rightHand == null)
                 {
-                    DisableOutline(current);
-                    current.transform.position = rightHandCamera.transform.position + Vector3.back;
-
-                    if (targetIngredient.currentContainer != null)
-                    {
-                        Container cont = targetIngredient.currentContainer;
-
-                        cont.ingredientsContain.Remove(current);
-                        cont.RefreshTypes();
-
-                        targetIngredient.currentContainer = null;
-                    }
-
-                    rightHand = current;
+                    HandlePickUp(current, targetIngredient, false);
                     PickUpCanva.enabled = false;
-
-                    current = null;
-                    last = null;
-
                 }
-                return; // On évite d'appeler ClearOutline()
+                return;
             }
         }
 
-        // Si on ne vise rien ou non-interactable, on nettoie proprement
         ClearOutline();
         PickUpCanva.enabled = false;
     }
 
+    // --- Nouvelle fonction pour gérer le ramassage standard (depuis le Raycast) ---
+    void HandlePickUp(GameObject obj, Ingredients ingScript, bool isLeft)
+    {
+        DisableOutline(obj);
+
+        // Retirer du container si nécessaire
+        if (ingScript.currentContainer != null)
+        {
+            Container cont = ingScript.currentContainer;
+            cont.ingredientsContain.Remove(obj);
+            cont.RefreshTypes();
+            ingScript.currentContainer = null;
+        }
+
+        // Placer dans la main
+        PlaceInHand(obj, isLeft);
+
+        // Reset variables de visée
+        current = null;
+        last = null;
+    }
+
+    // --- NOUVELLE FONCTION APPELÉE PAR LE MENU ---
+    public void EquipFromMenu(GameObject prefab, bool isLeft)
+    {
+        // 1. On instancie le prefab qui vient du ScriptableObject
+        GameObject newObj = Instantiate(prefab);
+
+        // 2. On s'assure qu'il a bien le composant Ingredients (sécurité)
+        if (newObj.GetComponent<Ingredients>() == null)
+        {
+            Debug.LogError("Le prefab dans le menu n'a pas le script Ingredients !");
+        }
+
+        // 3. Si la main est déjà pleine, on détruit l'ancien objet (ou on le lâche, selon ton choix)
+        if (isLeft && leftHand != null) Destroy(leftHand);
+        if (!isLeft && rightHand != null) Destroy(rightHand);
+
+        // 4. On place l'objet
+        PlaceInHand(newObj, isLeft);
+    }
+
+    // --- Logique commune de placement (TP devant la caméra lointaine) ---
+    void PlaceInHand(GameObject obj, bool isLeft)
+    {
+        if (isLeft)
+        {
+            leftHand = obj;
+            // Ta logique de position pour la main gauche
+            leftHand.transform.position = leftHandCamera.transform.position + Vector3.forward;
+            // Optionnel : aligner la rotation
+            leftHand.transform.rotation = leftHandCamera.transform.rotation;
+        }
+        else
+        {
+            rightHand = obj;
+            // Ta logique de position pour la main droite
+            rightHand.transform.position = rightHandCamera.transform.position + Vector3.back;
+            // Optionnel : aligner la rotation
+            rightHand.transform.rotation = rightHandCamera.transform.rotation;
+        }
+    }
+
+    // --- Utilitaires Outline ---
     void EnableOutline(GameObject obj)
     {
         if (obj == null) return;
-
         Outline outline = obj.GetComponent<Outline>();
-        if (outline != null)
-            outline.enabled = true;
+        if (outline != null) outline.enabled = true;
     }
 
     void DisableOutline(GameObject obj)
     {
         if (obj == null) return;
-
         Outline outline = obj.GetComponent<Outline>();
-        if (outline != null)
-            outline.enabled = false;
+        if (outline != null) outline.enabled = false;
     }
 
     void ClearOutline()
     {
-        if (last != null)
-        {
-            DisableOutline(last);
-            last = null;
-        }
-
+        if (last != null) { DisableOutline(last); last = null; }
         current = null;
     }
 }

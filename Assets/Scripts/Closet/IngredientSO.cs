@@ -4,5 +4,7 @@ using UnityEngine;
 public class IngredientSO : ScriptableObject
 {
     public string nom;
-    public Texture image; // L'image de la carotte, du fromage, etc.
+    [TextArea] public string description;
+    public Texture image;
+    public GameObject prefab;
 }

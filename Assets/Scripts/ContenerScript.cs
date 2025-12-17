@@ -38,7 +38,7 @@ public class ContenerScript : MonoBehaviour
             if (target.layer == LayerMask.NameToLayer("Container") && PUController._holding == true)
             {
                 targetContainer = target.GetComponent<Container>();
-                if (targetContainer == null) Debug.LogError("Alerte y'a pas de Container là"); // sécurité
+                if (targetContainer == null && target.tag != "Closet") Debug.LogWarning("Alerte y'a pas de Container là"); // sécurité
 
                 if (last != null & last != target)
                     DisableOutline(last);
