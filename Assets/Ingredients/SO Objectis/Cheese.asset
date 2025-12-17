@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: Cheese
   m_EditorClassIdentifier: 
   nom: Cheese
+  description: Un Fromage trop coolZ
   image: {fileID: 2800000, guid: b01c8edd8370581479a784f452ff736b, type: 3}
+  prefab: {fileID: 8313007916273227727, guid: f0a515c01baaa7143b0f844022c6629a, type: 3}

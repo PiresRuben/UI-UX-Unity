@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: Aubergine
   m_EditorClassIdentifier: 
   nom: Aubergine
+  description: Une Aubergine trop coolZ
   image: {fileID: 2800000, guid: 35e83448159240d48b3ab17a7ce19dc9, type: 3}
+  prefab: {fileID: 4662481247784556559, guid: 0630a819ef9e2cc4b96f66900f89d939, type: 3}

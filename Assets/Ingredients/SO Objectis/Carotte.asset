@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: Carotte
   m_EditorClassIdentifier: 
   nom: Carrots
+  description: Une Carotte trop coolZ
   image: {fileID: 2800000, guid: 48887568a85adfc40abcac974d5469a9, type: 3}
+  prefab: {fileID: 767819451593173611, guid: a6ee7d82a295d4043909d951fe2a72da, type: 3}
