@@ -1,48 +1,34 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class RecipeSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class RecipeSlot : MonoBehaviour
 {
     public Book bookManager;
-    private Recipe myRecipe;
-    private TextMeshProUGUI myText;
-    private Color originalColor;
-    public Color highlightColor = Color.yellow;
 
-    void Awake()
-    {
-        myText = GetComponent<TextMeshProUGUI>();
-        originalColor = myText.color;
-    }
+    [Header("Composants Page")]
+    public TextMeshProUGUI titleTextOnPage;
+    public TextMeshProUGUI descriptionTextOnPage;
+    public Button readMoreButton;
+
     public void Setup(Recipe recipe)
     {
-        myRecipe = recipe;
-        if (myRecipe != null)
+        readMoreButton.onClick.RemoveAllListeners();
+
+        if (recipe != null)
         {
-            myText.text = myRecipe.title;
+            // On force le gras sur la page du livre aussi
+            titleTextOnPage.text = "<b>" + recipe.title + "</b>";
+            descriptionTextOnPage.text = recipe.description;
+
+            readMoreButton.gameObject.SetActive(true);
+            readMoreButton.onClick.AddListener(() => bookManager.OpenReadModal(recipe));
         }
         else
         {
-            myText.text = "";
-        }
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        if (myRecipe != null) myText.color = highlightColor;
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        myText.color = originalColor;
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if (myRecipe != null)
-        {
-            bookManager.OpenReadModal(myRecipe);
+            titleTextOnPage.text = "<i>Page Vide</i>";
+            descriptionTextOnPage.text = "";
+            readMoreButton.gameObject.SetActive(false);
         }
     }
 }

@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
@@ -59,7 +59,7 @@ public class Player : MonoBehaviour
 
     void SetHighlight(GameObject obj)
     {
-        if (!obj.TryGetComponent(out Outline outline))
+        if (!obj.TryGetComponent(out Outline outline))  
         {
             outline = obj.AddComponent<Outline>();
             outline.OutlineMode = Outline.Mode.OutlineAll;
@@ -176,4 +176,4 @@ public class Player : MonoBehaviour
         obj.layer = layer;
         foreach (Transform child in obj.transform) SetLayerRecursively(child.gameObject, layer);
     }
-}
+}*/

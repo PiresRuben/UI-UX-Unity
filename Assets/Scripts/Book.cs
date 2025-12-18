@@ -1,151 +1,122 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using System.Collections.Generic;
+using TMPro;
 
 public class Book : MonoBehaviour
 {
-    [Header("Data")]
-    public List<Recipe> allRecipes = new List<Recipe>();
+    public static bool IsMenuOpen = false;
 
-    [Header("World Space UI Elements")]
+    [Header("Données")]
+    public List<Recipe> allRecipes = new List<Recipe>();
+    private int currentIndex = 0;
+    private List<string> tempIngredients = new List<string>();
+
+    [Header("Pages UI")]
     public RecipeSlot leftPageSlot;
     public RecipeSlot rightPageSlot;
     public Button prevBtn;
     public Button nextBtn;
 
-    [Header("Screen Space Popups")]
+    [Header("Popups")]
     public GameObject readPanel;
     public GameObject addPanel;
-    public CanvasGroup mainCanvasGroup;
 
-    [Header("Read Popup Components")]
+    [Header("Lecture")]
     public TextMeshProUGUI readTitle;
     public TextMeshProUGUI readDesc;
     public TextMeshProUGUI readIngredients;
 
-    [Header("Add Popup Components")]
+    [Header("Création")]
     public TMP_InputField inputTitle;
     public TMP_InputField inputDesc;
     public TMP_Dropdown ingredientDropdown;
-
-    private int currentIndex = 0;
+    public TextMeshProUGUI tempIngredientsDisplay;
 
     void Start()
     {
         UpdatePages();
         CloseAllPopups();
-
-        // Setup initial des boutons
-        prevBtn.onClick.AddListener(PrevPage);
-        nextBtn.onClick.AddListener(NextPage);
     }
 
-    // --- GESTION DES PAGES ---
-
-    void UpdatePages()
+    public void AddIngredientFromDropdown()
     {
-        // Page Gauche
-        if (currentIndex < allRecipes.Count)
-            leftPageSlot.Setup(allRecipes[currentIndex]);
-        else
-            leftPageSlot.Setup(null);
-
-        // Page Droite
-        if (currentIndex + 1 < allRecipes.Count)
-            rightPageSlot.Setup(allRecipes[currentIndex + 1]);
-        else
-            rightPageSlot.Setup(null);
-
-        // Gestion état des boutons
-        prevBtn.interactable = currentIndex > 0;
-        nextBtn.interactable = currentIndex + 2 < allRecipes.Count;
-    }
-
-    public void NextPage()
-    {
-        if (currentIndex + 2 < allRecipes.Count)
+        if (ingredientDropdown.options.Count > 0)
         {
-            currentIndex += 2;
-            UpdatePages();
+            string selected = ingredientDropdown.options[ingredientDropdown.value].text;
+            if (!tempIngredients.Contains(selected))
+            {
+                tempIngredients.Add(selected);
+                UpdateTempDisplay();
+            }
         }
     }
 
-    public void PrevPage()
+    void UpdateTempDisplay()
     {
-        if (currentIndex - 2 >= 0)
-        {
-            currentIndex -= 2;
-            UpdatePages();
-        }
+        if (tempIngredientsDisplay)
+            tempIngredientsDisplay.text = "<b>Ingrédients ajoutés :</b>\n" + string.Join(", ", tempIngredients);
     }
-
-    // --- GESTION POPUP LECTURE ---
 
     public void OpenReadModal(Recipe recipe)
     {
+        IsMenuOpen = true;
         readPanel.SetActive(true);
-        readTitle.text = recipe.title;
+        addPanel.SetActive(false);
+        readTitle.text = "<b>" + recipe.title + "</b>";
         readDesc.text = recipe.description;
-
-        // Convertir la liste d'ingrédients en un seul texte
-        readIngredients.text = "Ingrédients:\n" + string.Join("\n- ", recipe.ingredients);
-
-        ToggleGameInteraction(false);
+        readIngredients.text = "<b>Ingrédients :</b>\n- " + string.Join("\n- ", recipe.ingredients);
+        ToggleInteraction(false);
     }
-
-    // --- GESTION POPUP AJOUT ---
 
     public void OpenAddModal()
     {
+        IsMenuOpen = true;
+        readPanel.SetActive(false);
         addPanel.SetActive(true);
         inputTitle.text = "";
         inputDesc.text = "";
-        ToggleGameInteraction(false);
+        tempIngredients.Clear();
+        UpdateTempDisplay();
+        ToggleInteraction(false);
     }
 
     public void SaveNewRecipe()
     {
-        Debug.Log("Tentative de sauvegarde...");
-
-        if (string.IsNullOrEmpty(inputTitle.text))
-        {
-            Debug.LogError("Erreur : Le titre est vide !");
-            return;
-        }
+        if (string.IsNullOrEmpty(inputTitle.text) || tempIngredients.Count == 0) return;
 
         Recipe newRecipe = ScriptableObject.CreateInstance<Recipe>();
         newRecipe.title = inputTitle.text;
         newRecipe.description = inputDesc.text;
-        newRecipe.ingredients = new List<string>();
-
-        if (ingredientDropdown.options.Count > 0)
-        {
-            newRecipe.ingredients.Add(ingredientDropdown.options[ingredientDropdown.value].text);
-        }
-        else
-        {
-            Debug.LogWarning("Attention : Le Dropdown est vide, aucun ingrédient ajouté.");
-        }
+        newRecipe.ingredients = new List<string>(tempIngredients);
 
         allRecipes.Add(newRecipe);
-        Debug.Log("Recette ajoutée à la liste ! Total : " + allRecipes.Count);
-
         UpdatePages();
         CloseAllPopups();
     }
 
-
     public void CloseAllPopups()
     {
+        IsMenuOpen = false;
         readPanel.SetActive(false);
         addPanel.SetActive(false);
-        ToggleGameInteraction(true);
+        ToggleInteraction(true);
     }
 
-    void ToggleGameInteraction(bool enable)
+    void ToggleInteraction(bool gamePlay)
     {
-        Cursor.visible = !enable;
-        Cursor.lockState = enable ? CursorLockMode.Locked : CursorLockMode.None;
+        Cursor.visible = !gamePlay;
+        Cursor.lockState = gamePlay ? CursorLockMode.Locked : CursorLockMode.None;
     }
+
+    public void UpdatePages()
+    {
+        if (leftPageSlot) leftPageSlot.Setup(currentIndex < allRecipes.Count ? allRecipes[currentIndex] : null);
+        if (rightPageSlot) rightPageSlot.Setup(currentIndex + 1 < allRecipes.Count ? allRecipes[currentIndex + 1] : null);
+        prevBtn.interactable = currentIndex > 0;
+        nextBtn.interactable = currentIndex + 2 < allRecipes.Count;
+    }
+
+    public void NextPage() { if (currentIndex + 2 < allRecipes.Count) { currentIndex += 2; UpdatePages(); } }
+    public void PrevPage() { if (currentIndex - 2 >= 0) { currentIndex -= 2; UpdatePages(); } }
 }
