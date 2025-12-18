@@ -8,4 +8,7 @@ public class Recipe : ScriptableObject
     [TextArea(5, 10)]
     public string description;
     public List<string> ingredients;
+    public List<Ingredients.Type> requiredIngredients;
+
+    public GameObject resultPrefab;
 }

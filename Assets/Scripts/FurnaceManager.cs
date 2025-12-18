@@ -94,16 +94,4 @@ public class FurnaceManager : MonoBehaviour
 
         Debug.Log("Changement de température du four");
     }
-
-    public void Cooking()
-    {
-        if (furnaceContainer.ingredients.Count > 1 || furnaceContainer.ingredients.Count == 0)
-        {
-            Debug.Log("Trop d'ingrédients sur le grill");
-        }
-        else if (furnaceContainer.ingredients.Count == 1)
-        {
-            furnaceContainer.ingredients[0].isCooked = true;
-        }
-    }
 }

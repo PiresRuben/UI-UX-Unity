@@ -3462,7 +3462,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ingredientsContain: []
   ingredientsTypes: 
-  ingredients: []
+  allRecipes:
+  - {fileID: 0}
 --- !u!1 &580057253
 GameObject:
   m_ObjectHideFlags: 0
@@ -5816,7 +5817,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ingredientsContain: []
   ingredientsTypes: 
-  ingredients: []
+  allRecipes:
+  - {fileID: 11400000, guid: 1d1a0d9f68d665b41a8a34f4f815e0e6, type: 2}
 --- !u!1001 &937132347
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6590,7 +6592,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ingredientsContain: []
   ingredientsTypes: 
-  ingredients: []
+  allRecipes: []
 --- !u!114 &1128362017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9729,7 +9731,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1854624946
 MonoBehaviour:
   m_ObjectHideFlags: 0
