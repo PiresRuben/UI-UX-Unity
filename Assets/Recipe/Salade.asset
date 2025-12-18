@@ -16,3 +16,5 @@ MonoBehaviour:
   description: wow une salade
   ingredients:
   - Salade
+  requiredIngredients: 000000000200000001000000
+  resultPrefab: {fileID: 8751401190993797968, guid: ba3c7290c426740468a68f7aa14e50bc, type: 3}

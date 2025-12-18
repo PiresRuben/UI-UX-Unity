@@ -92,7 +92,7 @@ public class FurnaceManager : MonoBehaviour
         else if (!isLookingAtFurnace && FurnaceCanva.gameObject.activeSelf) FurnaceCanva.gameObject.SetActive(false);
 
         if (isLookingAtFurnace && temperatureDisplay != null)
-            temperatureDisplay.text = "Temp: " + temperature.ToString("F0") + "�C";
+            temperatureDisplay.text = "Temp: " + temperature.ToString("F0") + "°C";
     }
 
     private bool LookCheck()
@@ -108,5 +108,15 @@ public class FurnaceManager : MonoBehaviour
 
     private bool RangeCheck() => player != null && Vector3.Distance(transform.position, player.transform.position) < range;
 
-    private void OnTemperatureSliderChanged(float newTemperature) { temperature = newTemperature; }
+    // --- CONFLIT RÉSOLU ICI ---
+    private void OnTemperatureSliderChanged(float newTemperature) 
+    { 
+        temperature = newTemperature; 
+
+        // Mise à jour immédiate de l'affichage quand on bouge le slider
+        if (temperatureDisplay != null)
+        {
+            temperatureDisplay.text = "Temp: " + temperature.ToString("F0") + "°C";
+        }
+    }
 }
