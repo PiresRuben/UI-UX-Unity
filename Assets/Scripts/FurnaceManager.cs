@@ -9,7 +9,7 @@ public class FurnaceManager : MonoBehaviour
     private float range = 3.5f;
 
     [Header("Depencies")]
-    public PlayerController player;
+    public FPSController player;
     [SerializeField] private Camera playerCamera;
     [SerializeField] private Container furnaceContainer;
 
@@ -26,10 +26,19 @@ public class FurnaceManager : MonoBehaviour
 
     private void Start()
     {
+        if (player == null)
+        {
+            player = FindObjectOfType<FPSController>();
+        }
+
+        if (playerCamera == null)
+        {
+            playerCamera = Camera.main;
+        }
+
         if (temperatureSlider != null && FurnaceCanva != null)
         {
             temperatureSlider.value = temperature;
-
             temperatureSlider.onValueChanged.AddListener(OnTemperatureSliderChanged);
         }
     }
