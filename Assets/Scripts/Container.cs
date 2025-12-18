@@ -20,7 +20,6 @@ public class Container : MonoBehaviour
         foreach (var go in ingredientsContain)
         {
             if (go == null) continue;
-
             // --- Logique Visuelle (HEAD) ---
             // On place l'objet sur la plaque et on le lie au grill
             go.transform.position = transform.position + (Vector3.up * 0.1f);
@@ -34,19 +33,27 @@ public class Container : MonoBehaviour
             }
         }
 
+        Debug.Log("Ingrédients dans le container : " + ingredientsTypes.Count);
         // --- Logique de Recette (Branch closet-reparation) ---
         CheckForRecipes(); 
     }
 
     private void CheckForRecipes()
     {
-        if (allRecipes == null || allRecipes.Count == 0) return;
+        if (allRecipes == null || allRecipes.Count == 0) 
+        {
+            Debug.Log("Pas de recettes");
+            return; 
+        }
+
+        Debug.Log("Vérification des recettes...");
 
         foreach (Recipe recipe in allRecipes)
         {
+            Debug.Log("Vérification de la recette : " + recipe.title);
             if (IsRecipeComplete(recipe))
             {
-                // On détruit les ingrédients utilisés
+                Debug.LogWarning("Recette complétée : " + recipe.title);
                 foreach (var go in ingredientsContain)
                 {
                     if (go != null) Destroy(go);
@@ -81,13 +88,10 @@ public class Container : MonoBehaviour
             }
             else
             {
+                Debug.Log("Ingrédient manquant pour la recette : " + required);
                 return false;
             }
-        }
-        
-        // Optionnel : vérifier si le nombre d'ingrédients correspond pile (pour éviter Steak + Steak = Salade)
-        // return tempIngredients.Count == 0; 
-        
+        }        
         return true;
     }
 }

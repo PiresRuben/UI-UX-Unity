@@ -57,10 +57,10 @@ public class ContenerScript : MonoBehaviour
                         Debug.Log("Ingredient Placé sur le four");
                         PUController.leftHand.transform.position += new Vector3(0, 1.5f, 0);
                     }
+
                     targetContainer.ingredientsContain.Add(PUController.leftHand);
                     PUController.leftHand.GetComponent<Ingredients>().currentContainer = targetContainer;
                     targetContainer.RefreshTypes();
-
                     PUController.leftHand = null;
                 }
 
