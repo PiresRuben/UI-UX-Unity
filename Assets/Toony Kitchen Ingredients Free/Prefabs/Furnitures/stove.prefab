@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3781938662396836901}
   - component: {fileID: 5754754969591420818}
   - component: {fileID: 8568410067674663651}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: stove
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,6 +60,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -96,7 +99,7 @@ GameObject:
   - component: {fileID: 115199431309570361}
   - component: {fileID: 5606155770721703530}
   - component: {fileID: 7718458611180035980}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -143,6 +146,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -179,7 +185,7 @@ GameObject:
   - component: {fileID: 6854722596689417579}
   - component: {fileID: 7438951014034254133}
   - component: {fileID: 2335758071192273811}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: switch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -226,6 +232,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
