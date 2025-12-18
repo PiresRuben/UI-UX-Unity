@@ -178,7 +178,7 @@ public class PickUpController : MonoBehaviour
         obj.transform.localRotation = Quaternion.identity;
         
         // Changement de layer pour eviter que l'objet ne bloque le Raycast de visee
-        obj.layer = LayerMask.NameToLayer("Default");
+        obj.layer = LayerMask.NameToLayer("Ingredients");
 
         if (obj.TryGetComponent(out Rigidbody rb))
         {
