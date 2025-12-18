@@ -1366,23 +1366,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fb7110dd20b83e40b401c76721c2ec1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allRecipes:
-  - {fileID: 11400000, guid: 1d1a0d9f68d665b41a8a34f4f815e0e6, type: 2}
-  - {fileID: 11400000, guid: 08c82eb58713fdb47b8ce95a686a7ca0, type: 2}
-  - {fileID: 11400000, guid: d252693235d45a74b98b39902032d4c8, type: 2}
+  startingRecipes: []
+  defaultResultPrefab: {fileID: 3062012631162009370, guid: ab80ca41dbe0c854ea6ce03c20029c2e, type: 3}
   leftPageSlot: {fileID: 684099878}
   rightPageSlot: {fileID: 97671351}
-  prevBtn: {fileID: 655949787}
-  nextBtn: {fileID: 133888088}
   readPanel: {fileID: 313433504}
   addPanel: {fileID: 619319687}
-  readTitle: {fileID: 1480886646}
-  readDesc: {fileID: 691691688}
-  readIngredients: {fileID: 653324673}
+  prevBtn: {fileID: 655949787}
+  nextBtn: {fileID: 133888088}
   inputTitle: {fileID: 1090142868}
   inputDesc: {fileID: 1664239599}
   ingredientDropdown: {fileID: 1640265817}
-  tempIngredientsDisplay: {fileID: 0}
+  tempDisplay: {fileID: 0}
 --- !u!4 &135453289
 Transform:
   m_ObjectHideFlags: 0

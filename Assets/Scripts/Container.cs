@@ -20,40 +20,35 @@ public class Container : MonoBehaviour
         foreach (var go in ingredientsContain)
         {
             if (go == null) continue;
-            // --- Logique Visuelle (HEAD) ---
-            // On place l'objet sur la plaque et on le lie au grill
+
+            // On positionne l'objet sur le grill
             go.transform.position = transform.position + (Vector3.up * 0.1f);
             go.transform.SetParent(this.transform);
 
             Ingredients ing = go.GetComponent<Ingredients>();
-            if (ing != null) 
+            if (ing != null)
             {
+                // --- CETTE LIGNE EST LA CLÉ ---
+                ing.currentContainer = this;
+
                 ingredientsTypes.Add(ing.IngredientType);
-                ingredients.Add(ing); // Nécessaire pour FurnaceManager.cs
+                ingredients.Add(ing);
             }
         }
 
-        Debug.Log("Ingrédients dans le container : " + ingredientsTypes.Count);
-        // --- Logique de Recette (Branch closet-reparation) ---
-        CheckForRecipes(); 
+        CheckForRecipes();
     }
 
     private void CheckForRecipes()
     {
-        if (allRecipes == null || allRecipes.Count == 0) 
+        // On va chercher les recettes directement dans le livre (globales)
+        foreach (Recipe recipe in Book.globalRecipes)
         {
-            Debug.Log("Pas de recettes");
-            return; 
-        }
-
-        Debug.Log("Vérification des recettes...");
-
-        foreach (Recipe recipe in allRecipes)
-        {
-            Debug.Log("Vérification de la recette : " + recipe.title);
             if (IsRecipeComplete(recipe))
             {
-                Debug.LogWarning("Recette complétée : " + recipe.title);
+                // Debug pour confirmer la réussite
+                Debug.Log("<color=green>Recette créée détectée : </color>" + recipe.title);
+
                 foreach (var go in ingredientsContain)
                 {
                     if (go != null) Destroy(go);
@@ -63,21 +58,19 @@ public class Container : MonoBehaviour
                 ingredientsTypes.Clear();
                 ingredients.Clear();
 
-                // On fait apparaître le résultat (ex: une assiette finie)
+                // Création du résultat au centre du grill
                 if (recipe.resultPrefab != null)
                 {
                     Instantiate(recipe.resultPrefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
                 }
-                
-                // On s'arrête après avoir trouvé une recette valide
-                break; 
+                break;
             }
         }
     }
 
     private bool IsRecipeComplete(Recipe recipe)
     {
-        // On crée une copie temporaire pour vérifier les ingrédients un par un
+        // On travaille bien sur la liste technique (Required Ingredients)
         List<Ingredients.Type> tempIngredients = new List<Ingredients.Type>(ingredientsTypes);
 
         foreach (Ingredients.Type required in recipe.requiredIngredients)
@@ -88,10 +81,11 @@ public class Container : MonoBehaviour
             }
             else
             {
-                Debug.Log("Ingrédient manquant pour la recette : " + required);
-                return false;
+                return false; // Il manque un ingrédient de la liste "Required"
             }
-        }        
-        return true;
+        }
+
+        // Si on veut une recette exacte (pas d'ingrédients en trop)
+        return tempIngredients.Count == 0;
     }
 }

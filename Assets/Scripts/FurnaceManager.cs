@@ -77,11 +77,18 @@ public class FurnaceManager : MonoBehaviour
         Quaternion rot = oldIng.transform.rotation;
         Transform parent = oldIng.transform.parent;
 
+        // On crée le steak cuit
         GameObject cookedObj = Instantiate(oldIng.cookedPrefab, pos, rot, parent);
+
+        // On remplace l'ancien par le nouveau dans la liste
         furnaceContainer.ingredientsContain[index] = cookedObj;
 
+        // On détruit l'ancien
         Destroy(oldIng.gameObject);
+
+        // On force le rafraîchissement pour lier le nouveau steak au container
         furnaceContainer.RefreshTypes();
+
         isCookingStarted = false;
     }
 
