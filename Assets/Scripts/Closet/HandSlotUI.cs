@@ -1,23 +1,50 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class HandSlotUI : MonoBehaviour, IDropHandler
 {
-    public bool isLeftHand; // Coche la case pour la main gauche, laisse vide pour la droite
-    public CupboardMenuManager manager; // Glisse ton manager ici
+    [Header("Configuration")]
+    public bool isLeftHand;
+    public CupboardMenuManager manager;
+
+    [Header("RenderTexture Display")]
+    public RawImage handDisplay; // NOUVEAU : L'image UI qui affiche la RenderTexture
+    public Camera handCamera;    // NOUVEAU : La caméra qui rend la main (leftHandCamera ou rightHandCamera)
+
+    void Start()
+    {
+        // NOUVEAU : Configuration automatique de la RenderTexture
+        if (handCamera != null && handDisplay != null)
+        {
+            // Créer une RenderTexture si elle n'existe pas déjà
+            if (handCamera.targetTexture == null)
+            {
+                RenderTexture rt = new RenderTexture(256, 256, 16);
+                handCamera.targetTexture = rt;
+            }
+
+            // Assigner la RenderTexture à l'image UI
+            handDisplay.texture = handCamera.targetTexture;
+        }
+    }
 
     public void OnDrop(PointerEventData eventData)
     {
-        // On récupère l'objet qui est en train d'être glissé
-        ObjectButton draggedItem = eventData.pointerDrag.GetComponent<ObjectButton>();
+        ObjectButton draggedItem = eventData.pointerDrag?.GetComponent<ObjectButton>();
 
-        if (draggedItem != null)
+        if (draggedItem != null && manager != null)
         {
-            // On appelle la fonction du manager selon la main
-            if (isLeftHand) manager.PutInLeftHand();
-            else manager.PutInRightHand();
+            // Mettre à jour la sélection dans le manager
+            manager.ShowItemDetails(draggedItem.GetData());
 
-            Debug.Log("Objet déposé dans la main " + (isLeftHand ? "Gauche" : "Droite"));
+            // Équiper dans la main appropriée
+            if (isLeftHand)
+                manager.PutInLeftHand();
+            else
+                manager.PutInRightHand();
+
+            Debug.Log($"Objet déposé dans la main {(isLeftHand ? "Gauche" : "Droite")}");
         }
     }
 }
