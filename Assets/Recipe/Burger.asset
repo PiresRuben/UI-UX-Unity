@@ -10,14 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1299c90821a809d469335495555495d1, type: 3}
-  m_Name: Salade
+  m_Name: Burger
   m_EditorClassIdentifier: 
-  title: Salade
-  description: wow une salade
-  resultPrefab: {fileID: 8751401190993797968, guid: ba3c7290c426740468a68f7aa14e50bc, type: 3}
+  title: Burger
+  description: Un Burger delicieux
+  resultPrefab: {fileID: 6530758574615387552, guid: a6920e4c6f3cae3429ef390f653da2d4, type: 3}
   isDiscovered: 0
   requiredIngredients:
-  - type: 5
+  - type: 0
     mustBeCooked: 0
   - type: 2
+    mustBeCooked: 1
+  - type: 5
     mustBeCooked: 0

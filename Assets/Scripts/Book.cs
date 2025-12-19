@@ -3,24 +3,20 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
 using System;
+using System.Linq;
 
 public class Book : MonoBehaviour
 {
     public static bool IsMenuOpen = false;
-
-    // Liste partagée entre le livre et les grills
     public static List<Recipe> globalRecipes = new List<Recipe>();
 
-    [Header("Données de Base")]
+    [Header("Base de Données")]
     public List<Recipe> startingRecipes = new List<Recipe>();
+    public GameObject failedResultPrefab;
+
     private int currentIndex = 0;
-
-    // Listes temporaires pour la création
-    private List<Ingredients.Type> tempIngredientsLogic = new List<Ingredients.Type>();
-    private List<string> tempIngredientsNames = new List<string>();
-
-    [Header("Réglages de Création")]
-    public GameObject defaultResultPrefab; // Objet qui spawn quand on réussit une recette créée
+    private List<Recipe.IngredientRequirement> tempReqs = new();
+    private List<string> tempNames = new();
 
     [Header("UI Navigation")]
     public RecipeSlot leftPageSlot;
@@ -32,20 +28,20 @@ public class Book : MonoBehaviour
     public GameObject readPanel;
     public GameObject addPanel;
 
-    [Header("Composants Lecture")]
+    [Header("Composants UI Lecture")]
     public TextMeshProUGUI readTitle;
     public TextMeshProUGUI readDesc;
     public TextMeshProUGUI readIngredients;
 
-    [Header("Composants Création")]
+    [Header("Composants UI Création")]
     public TMP_InputField inputTitle;
     public TMP_InputField inputDesc;
     public TMP_Dropdown ingredientDropdown;
-    public TextMeshProUGUI creationIngredientsDisplay; // Le texte TMP qui montre la liste en temps réel
+    public TextMeshProUGUI creationIngredientsDisplay;
+    public Toggle cookedToggle;
 
     void Start()
     {
-        // On initialise la liste globale avec les recettes de départ
         globalRecipes.Clear();
         foreach (Recipe r in startingRecipes)
         {
@@ -57,91 +53,122 @@ public class Book : MonoBehaviour
         CloseAllPopups();
     }
 
-    // --- 1. LOGIQUE D'AFFICHAGE ET NAVIGATION ---
-    public void UpdatePages()
+    void Update()
     {
-        if (leftPageSlot)
-            leftPageSlot.Setup(currentIndex < globalRecipes.Count ? globalRecipes[currentIndex] : null);
-
-        if (rightPageSlot)
-            rightPageSlot.Setup(currentIndex + 1 < globalRecipes.Count ? globalRecipes[currentIndex + 1] : null);
-
-        prevBtn.interactable = currentIndex > 0;
-        nextBtn.interactable = currentIndex + 2 < globalRecipes.Count;
+        if (IsMenuOpen)
+        {
+            if (Cursor.lockState != CursorLockMode.None)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+        }
     }
 
-    public void NextPage() { if (currentIndex + 2 < globalRecipes.Count) { currentIndex += 2; UpdatePages(); } }
-    public void PrevPage() { if (currentIndex - 2 >= 0) { currentIndex -= 2; UpdatePages(); } }
+    public void UpdatePages()
+    {
+        if (leftPageSlot != null)
+            leftPageSlot.Setup(currentIndex < globalRecipes.Count ? globalRecipes[currentIndex] : null);
 
-    // --- 2. LOGIQUE DE CRÉATION DE RECETTE ---
+        if (rightPageSlot != null)
+            rightPageSlot.Setup(currentIndex + 1 < globalRecipes.Count ? globalRecipes[currentIndex + 1] : null);
+
+        if (prevBtn) prevBtn.interactable = currentIndex > 0;
+        if (nextBtn) nextBtn.interactable = currentIndex + 2 < globalRecipes.Count;
+    }
+
+    public void NextPage() { currentIndex += 2; UpdatePages(); }
+    public void PrevPage() { currentIndex -= 2; UpdatePages(); }
+
     void PopulateDropdown()
     {
+        if (ingredientDropdown == null) return;
         ingredientDropdown.ClearOptions();
-        List<string> options = new List<string>();
-        // Récupère automatiquement tous les ingrédients du script Ingredients
-        foreach (string name in Enum.GetNames(typeof(Ingredients.Type)))
-        {
-            options.Add(name);
-        }
+
+        List<string> options = Enum.GetNames(typeof(Ingredients.Type)).ToList();
         ingredientDropdown.AddOptions(options);
     }
 
     public void AddIngredientFromDropdown()
     {
         string selectedName = ingredientDropdown.options[ingredientDropdown.value].text;
-
-        // Conversion texte -> Enum technique
         Ingredients.Type selectedType = (Ingredients.Type)Enum.Parse(typeof(Ingredients.Type), selectedName);
 
-        tempIngredientsLogic.Add(selectedType);
-        tempIngredientsNames.Add(selectedName);
+        tempReqs.Add(new Recipe.IngredientRequirement { type = selectedType, mustBeCooked = cookedToggle.isOn });
+        tempNames.Add(selectedName + (cookedToggle.isOn ? " (Cuit)" : " (Cru)"));
 
         UpdateCreationDisplay();
     }
 
     void UpdateCreationDisplay()
     {
-        if (creationIngredientsDisplay != null)
-        {
-            string formattedList = string.Join(", ", tempIngredientsNames);
-            creationIngredientsDisplay.text = "<b>Ingrédients ajoutés :</b>\n" + formattedList;
-        }
+        if (creationIngredientsDisplay)
+            creationIngredientsDisplay.text = "<b>Ingrédients ajoutés :</b>\n" + string.Join(", ", tempNames);
     }
 
     public void SaveNewRecipe()
     {
-        if (string.IsNullOrEmpty(inputTitle.text) || tempIngredientsLogic.Count == 0) return;
+        if (string.IsNullOrEmpty(inputTitle.text) || tempReqs.Count == 0) return;
 
-        // On crée une instance réelle de la recette
-        Recipe newRecipe = ScriptableObject.CreateInstance<Recipe>();
-        newRecipe.title = inputTitle.text;
-        newRecipe.description = inputDesc.text;
+        Recipe match = FindMatchingRecipe(tempReqs);
 
-        // On remplit la liste technique (Required Ingredients)
-        newRecipe.requiredIngredients = new List<Ingredients.Type>(tempIngredientsLogic);
-        newRecipe.resultPrefab = defaultResultPrefab;
+        Recipe newR = ScriptableObject.CreateInstance<Recipe>();
+        newR.title = inputTitle.text;
+        newR.description = inputDesc.text;
+        newR.requiredIngredients = new List<Recipe.IngredientRequirement>(tempReqs);
+        newR.isDiscovered = true;
 
-        globalRecipes.Add(newRecipe);
+        if (match != null)
+        {
+            newR.resultPrefab = match.resultPrefab;
+            match.isDiscovered = true;
+        }
+        else
+        {
+            newR.resultPrefab = failedResultPrefab;
+        }
+
+        globalRecipes.Add(newR);
         UpdatePages();
         CloseAllPopups();
     }
 
-    // --- 3. MODALES ET SOURIS ---
+    private Recipe FindMatchingRecipe(List<Recipe.IngredientRequirement> playerReqs)
+    {
+        foreach (Recipe r in startingRecipes)
+        {
+            if (AreIngredientsMatching(playerReqs, r.requiredIngredients)) return r;
+        }
+        return null;
+    }
+
+    private bool AreIngredientsMatching(List<Recipe.IngredientRequirement> list1, List<Recipe.IngredientRequirement> list2)
+    {
+        if (list1.Count != list2.Count) return false;
+
+        List<Recipe.IngredientRequirement> checkList = new List<Recipe.IngredientRequirement>(list2);
+        foreach (var pReq in list1)
+        {
+            var found = checkList.Find(c => c.type == pReq.type && c.mustBeCooked == pReq.mustBeCooked);
+            if (found != null) checkList.Remove(found);
+            else return false;
+        }
+        return checkList.Count == 0;
+    }
+
     public void OpenReadModal(Recipe recipe)
     {
-        if (recipe == null) return;
+        if (recipe == null || !recipe.isDiscovered) return;
+
         IsMenuOpen = true;
         readPanel.SetActive(true);
-        addPanel.SetActive(false);
-
         readTitle.text = "<b>" + recipe.title + "</b>";
         readDesc.text = recipe.description;
 
-        // On affiche la liste technique (Required Ingredients)
         string listText = "<b>Ingrédients requis :</b>\n";
-        foreach (Ingredients.Type type in recipe.requiredIngredients)
+        foreach (var req in recipe.requiredIngredients)
         {
-            listText += "- " + type.ToString() + "\n";
+            listText += "- " + req.type.ToString() + (req.mustBeCooked ? " (Cuit)" : " (Cru)") + "\n";
         }
         readIngredients.text = listText;
 
@@ -154,11 +181,10 @@ public class Book : MonoBehaviour
         addPanel.SetActive(true);
         readPanel.SetActive(false);
 
-        // Reset des champs
         inputTitle.text = "";
         inputDesc.text = "";
-        tempIngredientsLogic.Clear();
-        tempIngredientsNames.Clear();
+        tempReqs.Clear();
+        tempNames.Clear();
         UpdateCreationDisplay();
 
         ToggleInteraction(false);
@@ -172,18 +198,9 @@ public class Book : MonoBehaviour
         ToggleInteraction(true);
     }
 
-    void ToggleInteraction(bool isPlaying)
+    void ToggleInteraction(bool gamePlay)
     {
-        if (isPlaying)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-        else
-        {
-            // Débloque la souris pour les panels
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
+        Cursor.visible = !gamePlay;
+        Cursor.lockState = gamePlay ? CursorLockMode.Locked : CursorLockMode.None;
     }
 }

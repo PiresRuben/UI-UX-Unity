@@ -77,16 +77,10 @@ public class FurnaceManager : MonoBehaviour
         Quaternion rot = oldIng.transform.rotation;
         Transform parent = oldIng.transform.parent;
 
-        // On crée le steak cuit
         GameObject cookedObj = Instantiate(oldIng.cookedPrefab, pos, rot, parent);
 
-        // On remplace l'ancien par le nouveau dans la liste
         furnaceContainer.ingredientsContain[index] = cookedObj;
-
-        // On détruit l'ancien
         Destroy(oldIng.gameObject);
-
-        // On force le rafraîchissement pour lier le nouveau steak au container
         furnaceContainer.RefreshTypes();
 
         isCookingStarted = false;
@@ -115,12 +109,10 @@ public class FurnaceManager : MonoBehaviour
 
     private bool RangeCheck() => player != null && Vector3.Distance(transform.position, player.transform.position) < range;
 
-    // --- CONFLIT RÉSOLU ICI ---
     private void OnTemperatureSliderChanged(float newTemperature) 
     { 
         temperature = newTemperature; 
 
-        // Mise à jour immédiate de l'affichage quand on bouge le slider
         if (temperatureDisplay != null)
         {
             temperatureDisplay.text = "Temp: " + temperature.ToString("F0") + "°C";

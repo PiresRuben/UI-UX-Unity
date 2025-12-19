@@ -17,12 +17,19 @@ public class RecipeSlot : MonoBehaviour
 
         if (recipe != null)
         {
-            // On force le gras sur la page du livre aussi
-            titleTextOnPage.text = "<b>" + recipe.title + "</b>";
-            descriptionTextOnPage.text = recipe.description;
-
-            readMoreButton.gameObject.SetActive(true);
-            readMoreButton.onClick.AddListener(() => bookManager.OpenReadModal(recipe));
+            if (recipe.isDiscovered)
+            {
+                titleTextOnPage.text = "<b>" + recipe.title + "</b>";
+                descriptionTextOnPage.text = recipe.description;
+                readMoreButton.gameObject.SetActive(true);
+                readMoreButton.onClick.AddListener(() => bookManager.OpenReadModal(recipe));
+            }
+            else
+            {
+                titleTextOnPage.text = "<b>????</b>";
+                descriptionTextOnPage.text = "Combinaison inconnue. Essayez de créer cette recette pour la débloquer.";
+                readMoreButton.gameObject.SetActive(false);
+            }
         }
         else
         {
