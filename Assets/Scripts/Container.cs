@@ -23,7 +23,11 @@ public class Container : MonoBehaviour
                 ingredients.Add(ing);
             }
         }
-        CheckForRecipes();
+        if (this.gameObject.tag == "Bin") { Debug.Log("C'est la poubelle"); return; }
+        else
+        {
+            CheckForRecipes();
+        }
     }
 
     private void CheckForRecipes()
