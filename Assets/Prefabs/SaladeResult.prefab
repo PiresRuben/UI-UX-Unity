@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5297423232823377575}
   - component: {fileID: 2799790811489897759}
   - component: {fileID: 6087914623832138166}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: lettuceIceberg_Leaf (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 7526443599829347861}
   - component: {fileID: 2377341622597633629}
   - component: {fileID: 6794525079726209749}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: lettuceIceberg_Leaf (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,7 +183,7 @@ GameObject:
   - component: {fileID: 2024011482436324506}
   - component: {fileID: 6925750721091221143}
   - component: {fileID: 319337644733372142}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: lettuceIceberg_Leaf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -269,7 +269,7 @@ GameObject:
   - component: {fileID: 3327492875910410406}
   - component: {fileID: 7995792697942138866}
   - component: {fileID: 2443051097177522141}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: lettuceIceberg_Leaf (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -355,7 +355,10 @@ GameObject:
   - component: {fileID: 7499077551080003842}
   - component: {fileID: 7449371564378112871}
   - component: {fileID: 6834129443149354132}
-  m_Layer: 0
+  - component: {fileID: 3814930009438033171}
+  - component: {fileID: 3551465743749038699}
+  - component: {fileID: 4112576727423099437}
+  m_Layer: 7
   m_Name: SaladeResult
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -434,3 +437,61 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &3814930009438033171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8751401190993797968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c476c9b67b3c854b95eceff57ffed51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IngredientType: 4
+  currentContainer: {fileID: 0}
+  canBeCooked: 0
+  cookedPrefab: {fileID: 0}
+  isCooked: 0
+  cookingTimer: 0
+--- !u!114 &3551465743749038699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8751401190993797968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 0, b: 0, a: 1}
+  outlineWidth: 10
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
+--- !u!64 &4112576727423099437
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8751401190993797968}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 6039318369386548323, guid: e11d9cbcb51649a4d8f186784d5a4f97, type: 3}
